@@ -1,0 +1,81 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+
+
+<div class="row">
+    <div class="col-md-3">
+        <h2>Busca de Amigos</h2>
+        <ul style="list-style-type:none">
+            <li>Em qual amigo você está hoje? <input type="button" value="Ver amigos" onclick="ListFriends()" /> </li>
+            <li> <select id="ddlFriend">
+                 </select>   </li>
+        </ul>
+        <input type="button" value="Procurar" onclick="ListNearlyFriends()"  />
+    </div>
+  <br />
+    <div class="col-lg-5" id="divFriend" style="display:none">
+        
+        Seu amigo mais próximo atualmente é: <label id="nearFriend"> </label>
+
+    </div>
+ 
+ 
+</div>
+
+<script>
+
+    function ListNearlyFriends() {
+        var selectedFriend = $('#ddlFriend').val();
+        alert(selectedFriend);
+        $.ajax({
+            url: 'http://localhost:63627/api/Friend/ListNearFriend?idFriend=' + selectedFriend,
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            type: 'GET',
+            dataType: 'json',
+            success: function (data) {
+              
+                $("#nearFriend").text(data.name); 
+                $("#divFriend").css('display', 'block');
+            },
+            error: function (x, y, z) {
+                alert('Problema en carregar las categorias del clientes', x, y);
+            }
+        });
+    }
+    
+
+    function ListFriends() {
+
+        var drop = $('#ddlFriend');
+        drop.empty();
+        drop.append('<option value="0" selected="selected"> </option>');
+
+
+        $.ajax({
+            url: 'http://localhost:63627/api/Friend/List',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            type: 'GET',
+            dataType: 'json',
+            success: function (data) {
+              
+                $.each(data, function (key, entry) {
+                    drop.append($('<option></option>').attr('value', entry.id).text(entry.name));
+                });
+            },
+            error: function (x, y, z) {
+                alert('Problema en carregar las categorias del clientes', x, y);
+            }
+        });
+    }
+
+   
+
+</script>
